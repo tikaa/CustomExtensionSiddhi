@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package customextension;
 
 import java.util.ArrayList;
@@ -26,9 +42,6 @@ public class GeoProximity extends FunctionExecutor {
 
 	Map<String, Geometry> GeometryList;
 
-	// ArrayList <String, Geometry> GList = new ArrayList<String, Geometry>();
-	// List<List<Geometry>> listOfLists = new ArrayList<List<Geometry>>();
-
 	public Attribute.Type getReturnType() {
 		return Attribute.Type.STRING;
 	}
@@ -40,123 +53,95 @@ public class GeoProximity extends FunctionExecutor {
 
 	@Override
 	public void init(Type[] attributeTypes, SiddhiContext siddhiContext) {
-		// TODO Auto-generated method stub
-		// synchronized (this) {
 		GeometryList = new HashMap<String, Geometry>();
-		// }
-
 	}
 
 	@Override
 	protected synchronized Object process(Object data) {
 
-		ArrayList<String> IDList = new ArrayList<String>();
+		ArrayList<String> idList = new ArrayList<String>();
 		Object functionParams[] = (Object[]) data;
 
 		double proximityDist = Double.parseDouble(functionParams[0].toString());
 		double pointOnelat = Double.parseDouble(functionParams[1].toString());
 		double pointOnelong = Double.parseDouble(functionParams[2].toString());
-		String id1 = functionParams[3].toString();
+		String id1 = functionParams[3].toString(); // ID of the first Elem
 		double time = Double.parseDouble(functionParams[4].toString());
 		double giventime = Double.parseDouble(functionParams[5].toString());
 
 		String pckttime = String.valueOf(time);
-		String id2 = null;
+		String id2 = null; // ID of the second Elem
 		double timediff;
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 		// draw the buffer for each point
 		Coordinate firstpoint = new Coordinate(pointOnelat, pointOnelong);
 		Point pointOne = geometryFactory.createPoint(firstpoint);
-
-		double bufferRadius = proximityDist / 110574.61087757687;// to convert
-		                                                         // to degrees
+		// to convert to degrees from coordinate units
+		double bufferRadius = proximityDist / 110574.61087757687;
 		Geometry buffer = pointOne.buffer(bufferRadius);
-
 		// if that id already exist update that entry
-
 		GeometryList.put(id1, buffer);
-		// iterate
-		// through the
-		// list of all
-		// available
-		// vehicles
 
+		// iterate through the list of all available vehicles
 		for (Map.Entry<String, Geometry> entry : GeometryList.entrySet()) {
 			id2 = entry.getKey().toString();
+			// get the buffer for the current position of the vehicle
+			Geometry myBuffer = (Geometry) entry.getValue();
 
-			Geometry myBuffer = (Geometry) entry.getValue(); // get the
-			                                                 // buffer for
-			                                                 // the current
-			                                                 // position of
-			                                                 // the vehicle
+			if (!id2.equalsIgnoreCase(id1)) { // if the buffer is of another
+												// vehicle
+				if (pointOne.within(myBuffer)) { // if the two vehicles are in
+													// close proximity
 
-			if (!id2.equalsIgnoreCase(id1)) { // if the buffer is of
-				                              // another vehicle
-				if (pointOne.within(myBuffer)) { // if the two vehicles
-					                             // are in close
-					                             // proximity
-
-					if (!test.containsKey(id1+","+id2)) {// check for how long //NOTE
-												 // NEEDTO RESTRUCTURE!!!!!
-						                         // they have been close
-						String myarray1 = pckttime ;
-						test.put(id1+","+id2, myarray1);
-						test.put(id2+","+id1, myarray1);
+					if (!test.containsKey(id1 + "," + id2)) {// check for how
+																// long
+						String tempArray = pckttime;
+						test.put(id1 + "," + id2, tempArray);
+						test.put(id2 + "," + id1, tempArray);
 
 					}
 
-					double timecheck = Double.parseDouble(test.get(id1+","+id2));
-
+					double timecheck = Double.parseDouble(test.get(id1 + ","
+							+ id2));
 					timediff = time - timecheck;
-
-					if (timediff >= giventime){ // if the time difference for
-					                           // being
-					                           // in close proximity is less
-					                           // than
-					                           // the user input time period,
-					                           // output
-					                           // true else false
-
-					
-
-						IDList.add(id2);
+					// if the time difference for being in close proximity is
+					// less than the user input time period,
+					// output true else false
+					if (timediff >= giventime) {
+						idList.add(id2);
 					}
 				} else {
-					if (test.containsKey(id1+","+id2)) {
-						test.remove(id1+","+id2);
-						test.remove(id2+","+id1);
+					if (test.containsKey(id1 + "," + id2)) {
+						test.remove(id1 + "," + id2);
+						test.remove(id2 + "," + id1);
 					}
-
 				}
 			}
 		}
-
-		// TODO Auto-generated method stub
-
-		return generateOutput(IDList);
+		return generateOutput(idList);
 	}
 
 	/** generates the final output string **/
-	public String generateOutput(ArrayList<String> myList) {
+	public String generateOutput(ArrayList<String> idListFinal) {
 
-		String finalOutput = "false";
-		String myString = "null";
+		String finalOutput = "false"; // since we have to send in String format
+										// cannot use Bool here
+		String tempString = "null";
 		int i = 0;
 
-		if (myList.isEmpty() == false) {
+		if (idListFinal.isEmpty() == false) {
 
 			finalOutput = "true";
-			for (i = 0; i < myList.size(); i++) {
-				if (myString.equalsIgnoreCase("null")) {
-					myString = myList.get(i);
+			for (i = 0; i < idListFinal.size(); i++) {
+				if (tempString.equalsIgnoreCase("null")) {
+					tempString = idListFinal.get(i);
 				} else {
-					myString = myString + "," + myList.get(i);
+					tempString = tempString + "," + idListFinal.get(i);
 				}
 			}
-
 		}
-		if (!myString.equalsIgnoreCase("null")) {
-			finalOutput = finalOutput + "," + myString;
+		if (!tempString.equalsIgnoreCase("null")) {
+			finalOutput = finalOutput + "," + tempString;
 		}
 		return finalOutput;
 	}
