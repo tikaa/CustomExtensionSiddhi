@@ -28,16 +28,13 @@ import org.wso2.siddhi.core.util.EventPrinter;
 
 public class GeoProxTest {
 	public static void main(String[] args) throws Exception {
-
-		// from anurudhdha
+		
 		SiddhiConfiguration conf = new SiddhiConfiguration();
 		List<Class> classList = new ArrayList<Class>();
 		classList.add(GeoProximity.class);
 		conf.setSiddhiExtensions(classList);
-
 		SiddhiManager siddhiManager = new SiddhiManager();
 		siddhiManager.getSiddhiContext().setSiddhiExtensions(classList);
-
 		siddhiManager
 				.defineStream("define stream cseEventStream ( id int , time double, longitude double,lat double) ");
 		// format of the data being sent
@@ -45,12 +42,10 @@ public class GeoProxTest {
 		// 'type': 'Point', 'coordinates': [100.5, 0.5] }]}
 		// {"geometries":[{"type":"Point","coordinates":[
 		// 79.94248329162588,6.844997820293952]},{"type":"Point","coordinates":[100.0,0.0]}]}
-
 		String queryReference = siddhiManager
 				.addQuery("from cseEventStream "
 						+ "select id, time, geo:geoproximity(1,lat,longitude,id,time,1 ) as tt "
 						+ "insert into StockQuote;");
-
 		siddhiManager.addCallback(queryReference, new QueryCallback() {
 			@Override
 			public void receive(long timeStamp, Event[] inEvents,
@@ -59,11 +54,10 @@ public class GeoProxTest {
 
 			}
 		});
-
 		// id,time,longitude,lat,speed, false as speedFlag sending numeric values to test each scenario, 
 		InputHandler inputHandler = siddhiManager
 				.getInputHandler("cseEventStream");
-		
+		//test data
 		inputHandler.send(new Object[] { 1, 234.345, 100.786, 6.9876 }); //stationary
 		inputHandler.send(new Object[] { 2, 244.345, 100.786, 6.9876 });
 		inputHandler.send(new Object[] { 3, 244.345, 100.786, 6.9876 });
