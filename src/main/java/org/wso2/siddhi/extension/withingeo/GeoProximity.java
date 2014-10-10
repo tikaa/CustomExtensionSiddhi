@@ -45,7 +45,6 @@ public class GeoProximity extends FunctionExecutor {
 	}
 
 	public void destroy() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
