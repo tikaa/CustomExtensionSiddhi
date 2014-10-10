@@ -60,7 +60,8 @@ public class GeoProximity extends FunctionExecutor {
 		double proximityDist = Double.parseDouble(functionParams[0].toString());
 		double pointOneLat = Double.parseDouble(functionParams[1].toString());
 		double pointOneLong = Double.parseDouble(functionParams[2].toString());
-		String firstVehicleId = functionParams[3].toString(); // ID of the first vehicle
+		String firstVehicleId = functionParams[3].toString(); // ID of the first
+																// vehicle
 		double time = Double.parseDouble(functionParams[4].toString());
 		double givenTime = Double.parseDouble(functionParams[5].toString());
 		String pcktTime = String.valueOf(time);
@@ -120,15 +121,15 @@ public class GeoProximity extends FunctionExecutor {
 			finalOutput = TRUE;
 			for (int i = 0; i < idListFinal.size(); i++) {
 				if (tempString != null) {
-					tempString = tempString + "," + idListFinal.get(i);					
+					tempString = tempString + "," + idListFinal.get(i);
 				} else {
 					tempString = idListFinal.get(i);
 				}
 			}
 			if (tempString != null) {
 				finalOutput = finalOutput + "," + tempString;
-			}	
-		}		
+			}
+		}
 		return finalOutput;
 	}
 
