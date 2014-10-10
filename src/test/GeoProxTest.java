@@ -35,13 +35,14 @@ public class GeoProxTest {
 		conf.setSiddhiExtensions(classList);
 		SiddhiManager siddhiManager = new SiddhiManager();
 		siddhiManager.getSiddhiContext().setSiddhiExtensions(classList);
-		siddhiManager
-				.defineStream("define stream cseEventStream ( id int , time double, longitude double,lat double) ");
-		// format of the data being sent
-		// {'geometries':[{ 'type': 'Point', 'coordinates': [100.5, 0.5] },{
-		// 'type': 'Point', 'coordinates': [100.5, 0.5] }]}
-		// {"geometries":[{"type":"Point","coordinates":[
-		// 79.94248329162588,6.844997820293952]},{"type":"Point","coordinates":[100.0,0.0]}]}
+		siddhiManager.defineStream("define stream cseEventStream ( id int , time double, longitude double,lat double) ");
+		/*
+		 * format of the data being sent {'geometries':[{ 'type': 'Point',
+		 * 'coordinates': [100.5, 0.5] },{ 'type': 'Point', 'coordinates':
+		 * [100.5, 0.5] }]} {"geometries":[{"type":"Point","coordinates":[
+		 * 79.94248329162588
+		 * ,6.844997820293952]},{"type":"Point","coordinates":[100.0,0.0]}]}
+		 */
 		String queryReference = siddhiManager
 				.addQuery("from cseEventStream "
 						+ "select id, time, geo:geoproximity(1,lat,longitude,id,time,1 ) as tt "
