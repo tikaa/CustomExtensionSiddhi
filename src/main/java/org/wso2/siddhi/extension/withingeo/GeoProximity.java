@@ -117,8 +117,8 @@ public class GeoProximity extends FunctionExecutor {
 	 * @return the final output string
 	 */
 	public String generateOutput(List<String> idListFinal) {
-		String finalOutput = FALSE;
 		// since we have to send in String format cannot use bool here
+		String finalOutput = FALSE;
 		String tempString = null; // string null is checked at output check CEP
 		if (!idListFinal.isEmpty()) {
 			finalOutput = TRUE;
