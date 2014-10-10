@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.siddhiextension;
+package src.main.java.org.wso2.siddhi.extension.withingeo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
