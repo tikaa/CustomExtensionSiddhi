@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package customextension;
+package org.wso2.siddhiextension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
