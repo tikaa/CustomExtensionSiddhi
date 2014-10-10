@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package src.main.java.org.wso2.siddhi.extension.withingeo;
+package org.wso2.siddhi.extension.withingeo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,15 +37,12 @@ import com.vividsolutions.jts.geom.Point;
 public class GeoProximity extends FunctionExecutor {
 	private static final String TRUE = "true";//
 	private static final String FALSE = "false";//
-	private HashMap<String, String> proximityDevices = new HashMap<String, String>();
+	private Map<String, String> proximityDevices = new HashMap<String, String>();
 	private Map<String, Geometry> GeometryList;
 
 	public Attribute.Type getReturnType() {
 		return Attribute.Type.STRING;
-	}
-
-	public void destroy() {
-	}
+	}	
 
 	@Override
 	public void init(Type[] attributeTypes, SiddhiContext siddhiContext) {
@@ -95,9 +92,11 @@ public class GeoProximity extends FunctionExecutor {
 					}
 					double timecheck = Double.parseDouble(proximityDevices.get(hashMapKey));
 					timeDiff = time - timecheck;
-					// if the time difference for being in close proximity is
-					// less than the user input time period,
-					// output true else false
+					/*
+					 * if the time difference for being in close proximity is
+					 * less than the user input time period, output true else
+					 * false
+					 */
 					if (timeDiff >= givenTime) {
 						idList.add(secondVehicleId);
 					}
@@ -112,25 +111,32 @@ public class GeoProximity extends FunctionExecutor {
 		return generateOutput(idList);
 	}
 
-	/** generates the final output string **/
+	/**
+	 * 
+	 * @param idListFinal
+	 * @return the final output string
+	 */
 	public String generateOutput(List<String> idListFinal) {
 		String finalOutput = FALSE;
 		// since we have to send in String format cannot use bool here
 		String tempString = null; // string null is checked at output check CEP
 		if (!idListFinal.isEmpty()) {
 			finalOutput = TRUE;
-			for (int i = 0; i < idListFinal.size(); i++) {
+			for (String idElem : idListFinal) {
 				if (tempString != null) {
-					tempString = tempString + "," + idListFinal.get(i);
+					tempString = tempString + "," + idElem;
 				} else {
-					tempString = idListFinal.get(i);
+					tempString = idElem;
 				}
-			}
+			}			
 			if (tempString != null) {
 				finalOutput = finalOutput + "," + tempString;
 			}
 		}
 		return finalOutput;
+	}
+	
+	public void destroy() {
 	}
 
 }
