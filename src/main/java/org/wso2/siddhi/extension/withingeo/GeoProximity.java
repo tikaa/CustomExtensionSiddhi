@@ -35,6 +35,10 @@ import com.vividsolutions.jts.geom.Point;
 
 @SiddhiExtension(namespace = "geo", function = "geoproximity")
 public class GeoProximity extends FunctionExecutor {
+	/**
+	 * 
+	 */
+	private static final double DEGREES_TO_METERS_CONVERSION_CONSTANT = 110574.61087757687;
 	private static final String TRUE = "true";//
 	private static final String FALSE = "false";//
 	private Map<String, String> proximityDevices = new HashMap<String, String>();
@@ -69,7 +73,7 @@ public class GeoProximity extends FunctionExecutor {
 		Coordinate firstPoint = new Coordinate(pointOneLat, pointOneLong);
 		Point pointOne = geometryFactory.createPoint(firstPoint);
 		// to convert to degrees from coordinate units
-		double bufferRadius = proximityDist / 110574.61087757687;
+		double bufferRadius = proximityDist / DEGREES_TO_METERS_CONVERSION_CONSTANT;
 		Geometry buffer = pointOne.buffer(bufferRadius);
 		// if that id already exist update that entry
 		GeometryList.put(firstVehicleId, buffer);
