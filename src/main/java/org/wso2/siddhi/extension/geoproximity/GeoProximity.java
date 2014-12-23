@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.siddhi.extension.withingeo;
+package org.wso2.siddhi.extension.geoproximity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
